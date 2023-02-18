@@ -1,0 +1,47 @@
+services:
+  api:
+    container_name: card-game-api
+    restart: always
+    build: ./api
+    image: card-game-api
+    volumes:
+      - ./api/src:/app
+    ports:
+      - "${BACKEND_PORT}:${BACKEND_PORT}"
+    environment:
+      ADMIN_USERNAME: ${ADMIN_USERNAME}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD}
+      DATABASE_PORT: ${DATABASE_PORT}
+      EMAIL_LOGIN: ${EMAIL_LOGIN}
+      EMAIL_PASSWORD: ${EMAIL_PASSWORD}
+      SECRET_KEY: ${SECRET_KEY}
+    links:
+       - postgres
+    depends_on:
+      - postgres
+  postgres:
+    container_name: postgres
+    image: postgres:latest
+    environment:
+      POSTGRES_USER: ${ADMIN_USERNAME}
+      POSTGRES_PASSWORD: ${ADMIN_PASSWORD}
+      PGDATA: /database/data
+      POSTGRES_DB: prod
+    volumes:
+       - postgres-db:/data/postgres
+    ports:
+      - "${DATABASE_PORT}:${DATABASE_PORT}"
+  pgadmin:
+    container_name: pgadmin
+    image: dpage/pgadmin4
+    restart: always
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@admin.com
+      PGADMIN_DEFAULT_PASSWORD: root
+      PGADMIN_LISTEN_PORT: 5050
+    ports:
+      - "5050:5050"
+  
+volumes:
+  postgres-db:
+    driver: local
