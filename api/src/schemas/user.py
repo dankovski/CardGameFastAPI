@@ -1,11 +1,11 @@
 from datetime import date
-from pydantic import validator
+from pydantic import validator, BaseModel
 from typing import Optional
 import re
 from email_validator import validate_email, EmailNotValidError
 
 
-class UserCreate:
+class UserCreate(BaseModel):
     email: str = None
     username: str = None
     password: str = None
@@ -41,7 +41,7 @@ class UserCreate:
         return value
 
 
-class User:
+class User(BaseModel):
     email: str = None
     username: str = None
     created_date: Optional[date]
